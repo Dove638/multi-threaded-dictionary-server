@@ -44,10 +44,12 @@ A GUI is provided for the client using Java Swing. It allows users to:
 ```bash
 java -jar DictionaryServer.jar <port> <dictionary-file>
 
-**Server:**
+**Client:**
 ```bash
 java -jar DictionaryClient.jar <server-address> <port>
 
+
+## Repo Directory
 Multi-threaded Dictionary Server/
 ├── client/                  # Client-side code and GUI
 ├── server/                  # Server-side logic
