@@ -40,11 +40,11 @@ A GUI is provided for the client using Java Swing. It allows users to:
 
 ## 🚀 Running the Project
 
-**Server:**
+### 🖥️ Server
 ```bash
 java -jar DictionaryServer.jar <port> <dictionary-file>
 
-**Client:**
+### 🖥️ Client
 ```bash
 java -jar DictionaryClient.jar <server-address> <port>
 
