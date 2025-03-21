@@ -43,13 +43,14 @@ A GUI is provided for the client using Java Swing. It allows users to:
 ### 🖥️ Server
 ```bash
 java -jar DictionaryServer.jar <port> <dictionary-file>
+```
 
 ### 🖥️ Client
 ```bash
 java -jar DictionaryClient.jar <server-address> <port>
+```
 
-
-## Repo Directory
+## 📁 Repo Directory
 Multi-threaded Dictionary Server/
 ├── client/                  # Client-side code and GUI
 ├── server/                  # Server-side logic
