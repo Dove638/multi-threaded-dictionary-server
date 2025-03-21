@@ -51,6 +51,7 @@ java -jar DictionaryClient.jar <server-address> <port>
 ```
 
 ## 📁 Repo Directory
+```
 Multi-threaded Dictionary Server/
 ├── client/                  # Client-side code and GUI
 ├── server/                  # Server-side logic
