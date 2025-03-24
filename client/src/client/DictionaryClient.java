@@ -4,10 +4,21 @@ import java.io.*;
 
 public class DictionaryClient {
     public static void main(String args[]) throws IOException{
-        // Register service on specified port
-        Socket s1 = new Socket("localhost", 1234);
+        // Usage: java DictionaryClient <message> <hostname> <port number>
+        String msg = args[0];
+        String hostname = args[1];
+        int serverPort = Integer.parseInt(args[2]);
 
-        // Get an input file handle from the ocket and read the input
+
+        // Open a socket with user specified host and port number
+        Socket s1 = new Socket(hostname, serverPort);
+
+        // Sending a request
+
+
+
+
+        // Get an input file handle from the rocket and read the input
         InputStream s1ln = s1.getInputStream();
         DataInputStream dis  = new DataInputStream(s1ln);
         String st = new String(dis.readUTF());

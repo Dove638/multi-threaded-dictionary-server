@@ -14,7 +14,7 @@ public class DictionaryServer {
             DataOutputStream dos = new DataOutputStream(s1out);
 
             // Send over info
-            dos.writeUTF("Hi Dave and Anton");
+            dos.writeUTF("Helena u are the sickest cunt, coming from Dave's computer server.");
 
             // Close the connection but not the server socket
             dos.close();
