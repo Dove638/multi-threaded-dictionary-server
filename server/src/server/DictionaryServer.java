@@ -1,25 +1,26 @@
 package server;
-import java.net.*;
-import java.io.*;
+import java.io.IOException;
+import java.net.ServerSocket;
+import java.net.Socket;
 
 public class DictionaryServer {
-    public static void main(String args[]) throws IOException{
-        // Register service on port 1234
-        ServerSocket s = new ServerSocket(1234);
-        while (true){
-            Socket s1 = s.accept(); // wait and accept a connection
+    public static void main(String[] args) {
+        // Create a shared dictionary instance
+        Dictionary dictionary = new Dictionary();
 
-            // Get a communcation stream associated with the socket
-            OutputStream s1out = s1.getOutputStream();
-            DataOutputStream dos = new DataOutputStream(s1out);
+        try (ServerSocket serverSocket = new ServerSocket(1234)) {
+            System.out.println("Dictionary server started on port 1234...");
 
-            // Send over info
-            dos.writeUTF("Helena u are the sickest cunt, coming from Dave's computer server.");
+            while (true) {
+                // Accept a new client connection
+                Socket clientSocket = serverSocket.accept();
+                System.out.println("Accepted connection from: " + clientSocket.getInetAddress());
 
-            // Close the connection but not the server socket
-            dos.close();
-            s1out.close();
-            s1.close();
+                // Create a new thread (ClientHandler) to handle the persistent connection.
+                new Thread(new ClientHandler(clientSocket, dictionary)).start();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }
