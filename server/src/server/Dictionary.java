@@ -13,6 +13,12 @@ public class Dictionary {
         dictionary = new ConcurrentHashMap<>();
     }
 
+
+    public Dictionary(ConcurrentMap<String, Set<String>> dictionary){
+        this.dictionary = dictionary;
+    }
+
+
     // Query the meanings of a word; returns null if not found.
     public Set<String> query(String word) {
         if (word == null) return null;

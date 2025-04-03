@@ -33,8 +33,8 @@ public class ClientHandler implements Runnable {
                 }
 
                 // Process each request in its own thread from the pool.
-                requestPool.execute(() -> {
-                    String response = processRequest(request);
+                requestPool.execute(() -> {String response = processRequest(request);
+
                     // Synchronize output to prevent interleaving responses.
                     synchronized (writeLock) {
                         try {

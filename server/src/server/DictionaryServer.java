@@ -2,21 +2,42 @@ package server;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.concurrent.ConcurrentMap;
+import java.util.Set;
 
 public class DictionaryServer {
     public static void main(String[] args) {
-        // Create a shared dictionary instance
-        Dictionary dictionary = new Dictionary();
+        if (args == null || args.length != 2) {
+            throw new IllegalArgumentException("Usage: DictionaryServer <port> <dictionaryFilePath>");
+        }
+        int serverPort = Integer.parseInt(args[0]);
+        String dictionaryFilePath = args[1];
 
-        try (ServerSocket serverSocket = new ServerSocket(1234)) {
-            System.out.println("Dictionary server started on port 1234...");
+        StartServer(serverPort, dictionaryFilePath);
+    }
+
+    public static void StartServer(int port, String dictionaryFilePath) {
+        // Create the loader instance
+        DictionaryLoader loader = new CSVDictionaryLoader();
+        Dictionary dictionary = null;
+
+        try {
+            // Load the dictionary using the loader
+            ConcurrentMap<String, Set<String>> loadedData = loader.loadInitialDictionary(dictionaryFilePath);
+            dictionary = new Dictionary(loadedData);
+        } catch (Exception e) {
+            System.err.println("Error loading dictionary: " + e.getMessage());
+            e.printStackTrace();
+            System.exit(1);
+        }
+
+        // Start the server socket and listen for client connections
+        try (ServerSocket serverSocket = new ServerSocket(port)) {
+            System.out.println("Dictionary server started on port: " + port);
 
             while (true) {
-                // Accept a new client connection
                 Socket clientSocket = serverSocket.accept();
                 System.out.println("Accepted connection from: " + clientSocket.getInetAddress());
-
-                // Create a new thread (ClientHandler) to handle the persistent connection.
                 new Thread(new ClientHandler(clientSocket, dictionary)).start();
             }
         } catch (IOException e) {
