@@ -18,20 +18,16 @@ public class Dictionary {
     private final String filepath;
 
     // Constructors
-    public Dictionary() {
-        this.filepath = "";
-        dictionary = new ConcurrentHashMap<>();
-    }
+//    public Dictionary() {
+//        this.filepath = "";
+//        dictionary = new ConcurrentHashMap<>();
+//    }
 
     public Dictionary(String filepath){
         this.filepath = filepath;
         dictionary = new ConcurrentHashMap<>();
     }
 
-    public Dictionary(ConcurrentMap<String, Set<String>> dictionary){
-        this.filepath = "";
-        this.dictionary = dictionary;
-    }
 
     protected void loadInitialDictionary() throws IOException {
         dictionary = new ConcurrentHashMap<>();
