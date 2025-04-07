@@ -76,8 +76,10 @@ public class ClientHandler implements Runnable {
                 if (tokens.length < 3) {
                     return "Error: Insufficient parameters for ADD.";
                 }
+
                 String newWord = tokens[1];
                 String meaningsStr = tokens[2];
+
                 // Expecting multiple meanings separated by semicolons.
                 String[] meaningsArr = meaningsStr.split(";");
                 java.util.Set<String> meaningsSet = new java.util.HashSet<>();
@@ -86,11 +88,24 @@ public class ClientHandler implements Runnable {
                         meaningsSet.add(m.trim());
                     }
                 }
+
                 try {
                     boolean added = dictionary.addWord(newWord, meaningsSet);
-                    return added ? "Success: Word added." : "Error: Word already exists.";
-                } catch (IllegalArgumentException e) {
-                    return "Error: " + e.getMessage();
+                    if (added){
+                        try {
+                            dictionary.saveToFile();
+                        }
+                        catch (IOException e){
+                            return "Success: Word added, but error saving file: " + e.getMessage();
+                        }
+                        return "Success: Word added.";
+                    }
+                    else{
+                        return "Error: Word already exists.";
+                    }
+                }
+                catch (IllegalArgumentException e) {
+                    return "Error: " + e.getMessage(); // Will need to expand on this error
                 }
 
             case "REMOVE":
@@ -99,7 +114,18 @@ public class ClientHandler implements Runnable {
                 }
                 String removeWord = tokens[1];
                 boolean removed = dictionary.removeWord(removeWord);
-                return removed ? "Success: Word removed." : "Error: Word not found.";
+                if (removed) {
+                    try {
+                        dictionary.saveToFile();
+                    }
+                    catch (IOException e) {
+                        return "Success: Word removed, but error saving file: " + e.getMessage();
+                    }
+                    return "Success: Word removed.";
+                }
+                else {
+                    return "Error: Word not found.";
+                }
 
             case "APPEND":
                 if (tokens.length < 3) {
@@ -108,7 +134,16 @@ public class ClientHandler implements Runnable {
                 String existWord = tokens[1];
                 String newMeaning = tokens[2];
                 boolean appended = dictionary.addMeaning(existWord, newMeaning);
-                return appended ? "Success: Meaning added." : "Error: Word not found or meaning already exists.";
+                if (appended) {
+                    try {
+                        dictionary.saveToFile();
+                    } catch (IOException e) {
+                        return "Success: Meaning added, but error saving file: " + e.getMessage();
+                    }
+                    return "Success: Meaning added.";
+                } else {
+                    return "Error: Word not found or meaning already exists.";
+                }
 
             case "UPDATE":
                 if (tokens.length < 4) {
@@ -118,7 +153,16 @@ public class ClientHandler implements Runnable {
                 String oldMeaning = tokens[2];
                 String updatedMeaning = tokens[3];
                 boolean updated = dictionary.updateMeaning(updateWord, oldMeaning, updatedMeaning);
-                return updated ? "Success: Meaning updated." : "Error: Word or old meaning not found.";
+                if (updated) {
+                    try {
+                        dictionary.saveToFile();
+                    } catch (IOException e) {
+                        return "Success: Meaning updated, but error saving file: " + e.getMessage();
+                    }
+                    return "Success: Meaning updated.";
+                } else {
+                    return "Error: Word or old meaning not found.";
+                }
 
             default:
                 return "Error: Unknown command.";

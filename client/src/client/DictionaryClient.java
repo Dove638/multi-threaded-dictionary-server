@@ -8,7 +8,7 @@ public class DictionaryClient {
         Scanner scanner = new Scanner(System.in);
 
         // Prompt user for server connection details
-        System.out.print("Enter the server hostname: ");
+        System.out.print("Enter the server hostname: "); //10.13.89.80
         String hostname = scanner.nextLine();
 
         System.out.print("Enter the server port number: ");

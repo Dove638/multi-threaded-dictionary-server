@@ -1,5 +1,12 @@
 package server;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -7,15 +14,73 @@ import java.util.concurrent.CopyOnWriteArraySet;
 
 public class Dictionary {
     // Underlying storage: a map from lower-case words to a set of meanings
-    private final ConcurrentMap<String, Set<String>> dictionary;
+    private ConcurrentMap<String, Set<String>> dictionary;
+    private final String filepath;
 
+    // Constructors
     public Dictionary() {
+        this.filepath = "";
         dictionary = new ConcurrentHashMap<>();
     }
 
+    public Dictionary(String filepath){
+        this.filepath = filepath;
+        dictionary = new ConcurrentHashMap<>();
+    }
 
     public Dictionary(ConcurrentMap<String, Set<String>> dictionary){
+        this.filepath = "";
         this.dictionary = dictionary;
+    }
+
+    protected void loadInitialDictionary() throws IOException {
+        dictionary = new ConcurrentHashMap<>();
+
+        try (BufferedReader br = new BufferedReader(new FileReader(filepath))){
+            String line;
+
+            // Read each non-empty line
+            while ((line = br.readLine()) != null) {
+                line = line.trim();
+
+                if (line.isEmpty()) {
+                    continue;
+                }
+
+                String[] tokens = line.split(",");
+
+                if (tokens.length < 2) { // No meaning is provided
+                    continue;
+                }
+
+                // The first token is the word,
+                String word = tokens[0].trim().toLowerCase();
+                Set<String> meanings = new HashSet<>();
+
+                // Add each token as a meaning
+                for (int i = 1; i < tokens.length; i++) {
+                    String meaning = tokens[i].trim();
+                    if (!meaning.isEmpty()) {
+                        meanings.add(meaning);
+                    }
+                    dictionary.put(word, meanings);
+                }
+            }
+        }
+    }
+
+    public void saveToFile() throws IOException {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(filepath))) {
+            for (Map.Entry<String, Set<String>> entry : dictionary.entrySet()) {
+                StringBuilder sb = new StringBuilder();
+                sb.append(entry.getKey());
+                for (String meaning : entry.getValue()) {
+                    sb.append(",").append(meaning);
+                }
+                writer.write(sb.toString());
+                writer.newLine();
+            }
+        }
     }
 
 
@@ -71,4 +136,7 @@ public class Dictionary {
         }
         return false;
     }
+
+
 }
+

@@ -18,13 +18,12 @@ public class DictionaryServer {
 
     public static void StartServer(int port, String dictionaryFilePath) {
         // Create the loader instance
-        DictionaryLoader loader = new CSVDictionaryLoader();
         Dictionary dictionary = null;
 
         try {
             // Load the dictionary using the loader
-            ConcurrentMap<String, Set<String>> loadedData = loader.loadInitialDictionary(dictionaryFilePath);
-            dictionary = new Dictionary(loadedData);
+            dictionary = new Dictionary(dictionaryFilePath);
+            dictionary.loadInitialDictionary();
         } catch (Exception e) {
             System.err.println("Error loading dictionary: " + e.getMessage());
             e.printStackTrace();
@@ -38,7 +37,7 @@ public class DictionaryServer {
             while (true) {
                 Socket clientSocket = serverSocket.accept();
                 System.out.println("Accepted connection from: " + clientSocket.getInetAddress());
-                new Thread(new ClientHandler(clientSocket, dictionary)).start();
+                new Thread(new ClientHandler(clientSocket, dictionary)).start(); // This is where we create a new thread and client handler
             }
         } catch (IOException e) {
             e.printStackTrace();
