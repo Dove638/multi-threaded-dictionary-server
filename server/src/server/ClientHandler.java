@@ -5,19 +5,38 @@ import java.net.Socket;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+/**
+ * The {@code ClientHandler} class handles communication with a single client
+ * connected to the Dictionary server. It supports concurrent processing of
+ * client commands through a thread pool.
+ *
+ * <p>Supported commands include: QUERY, ADD, REMOVE, APPEND, and UPDATE.</p>
+ */
 public class ClientHandler implements Runnable {
     private Socket clientSocket;
     private Dictionary dictionary;
+
     // Thread pool to handle individual requests on this persistent connection
     private ExecutorService requestPool = Executors.newCachedThreadPool();
+
     // Lock to synchronize writes to the output stream
     private final Object writeLock = new Object();
 
+    /**
+     * Constructs a new {@code ClientHandler}.
+     *
+     * @param clientSocket The client socket connected to the server.
+     * @param dictionary   The shared dictionary used for processing requests.
+     */
     public ClientHandler(Socket clientSocket, Dictionary dictionary) {
         this.clientSocket = clientSocket;
         this.dictionary = dictionary;
     }
 
+    /**
+     * Entry point for the client handler thread. Continuously listens for and
+     * processes client requests until the connection is closed or the client sends "EXIT".
+     */
     @Override
     public void run() {
         try (
@@ -27,28 +46,33 @@ public class ClientHandler implements Runnable {
             // Continuously read requests from the persistent connection.
             while (true) {
                 String request = dis.readUTF();
-                // Optionally, handle an "EXIT" command to break the loop.
+
+                // Handle an "EXIT" command to break the loop and end connection.
                 if (request.equalsIgnoreCase("EXIT")) {
                     break;
                 }
 
                 // Process each request in its own thread from the pool.
-                requestPool.execute(() -> {String response = processRequest(request);
+                requestPool.execute(() -> {
+                    String response = processRequest(request);
 
                     // Synchronize output to prevent interleaving responses.
                     synchronized (writeLock) {
                         try {
                             dos.writeUTF(response);
-                        } catch (IOException e) {
+                        }
+                        catch (IOException e) {
                             e.printStackTrace();
                         }
                     }
                 });
             }
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             System.out.println("Client disconnected: " + clientSocket.getInetAddress());
-        } finally {
-            requestPool.shutdown();
+        }
+        finally {
+            requestPool.shutdown(); // Clean up the thread pool
             try {
                 clientSocket.close();
             } catch (IOException e) {
@@ -57,8 +81,13 @@ public class ClientHandler implements Runnable {
         }
     }
 
-    // Process client commands: QUERY, ADD, REMOVE, APPEND, UPDATE.
-    // The protocol is defined as: COMMAND:arg1:arg2:...
+    /**
+     * Processes a client request based on a simple text-based protocol.
+     * The format is {@code COMMAND:arg1:arg2:...}
+     *
+     * @param request The raw request string from the client.
+     * @return The response string to be sent back to the client.
+     */
     private String processRequest(String request) {
         String[] tokens = request.split(":");
         String command = tokens[0].toUpperCase();

@@ -6,11 +6,11 @@ import java.io.*;
 import java.util.concurrent.CountDownLatch;
 
 public class DictionaryClient {
-    String hostname;
-    int port;
-    Socket socket;
-    DataOutputStream dos;
-    DataInputStream dis;
+    private String hostname;
+    private int port;
+    private Socket socket;
+    private DataOutputStream dos;
+    private DataInputStream dis;
 
     public DictionaryClient() {
         // Hostname and port will be set via the GUI.
@@ -33,7 +33,9 @@ public class DictionaryClient {
         // Wait until the user has provided connection details.
         try {
             latch.await();
-        } catch (InterruptedException e) {
+        }
+        catch (InterruptedException e) {
+            System.out.println("An error occurred while waiting for user input.");
             e.printStackTrace();
         }
 
@@ -42,7 +44,8 @@ public class DictionaryClient {
             System.out.println("Connected to dictionary server at " + client.hostname + ":" + client.port);
             // Launch the operations frame on the Swing thread.
             SwingUtilities.invokeLater(() -> new DictionaryOperationsFrame(client));
-        } else {
+        }
+        else {
             System.out.println("Failed to connect to dictionary server.");
         }
     }
@@ -51,13 +54,15 @@ public class DictionaryClient {
      * Attempts to open a socket connection using the hostname and port.
      * @return true if connection is successful; false otherwise.
      */
-    public boolean connect() {
+    private boolean connect() {
         try {
             socket = new Socket(hostname, port);
             dos = new DataOutputStream(socket.getOutputStream());
             dis = new DataInputStream(socket.getInputStream());
             return true;
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
+            System.out.println("Failed to connect to dictionary server.");
             e.printStackTrace();
             return false;
         }
@@ -71,7 +76,8 @@ public class DictionaryClient {
             if (dos != null) dos.close();
             if (dis != null) dis.close();
             if (socket != null) socket.close();
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             e.printStackTrace();
         }
     }

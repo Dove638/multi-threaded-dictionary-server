@@ -12,59 +12,72 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.CopyOnWriteArraySet;
 
+/**
+ * The {@code Dictionary} class manages a thread-safe dictionary of words and their meanings.
+ * It supports loading from and saving to a file, as well as querying and modifying dictionary entries.
+ */
 public class Dictionary {
-    // Underlying storage: a map from lower-case words to a set of meanings
+    // Thread-safe map storing words and their meanings
     private ConcurrentMap<String, Set<String>> dictionary;
     private final String filepath;
 
-    // Constructors
-//    public Dictionary() {
-//        this.filepath = "";
-//        dictionary = new ConcurrentHashMap<>();
-//    }
-
+    /**
+     * Constructs a new Dictionary with the specified file path.
+     *
+     * @param filepath The path to the dictionary file.
+     */
     public Dictionary(String filepath){
         this.filepath = filepath;
         dictionary = new ConcurrentHashMap<>();
     }
 
-
+    /**
+     * Loads the dictionary from the file specified during construction.
+     * Each line in the file should have the format: word,meaning1,meaning2,...
+     *
+     * @throws IOException If the file cannot be read.
+     */
     protected void loadInitialDictionary() throws IOException {
         dictionary = new ConcurrentHashMap<>();
 
         try (BufferedReader br = new BufferedReader(new FileReader(filepath))){
             String line;
 
-            // Read each non-empty line
+            // Read and process each line in the dictionary file
             while ((line = br.readLine()) != null) {
                 line = line.trim();
 
                 if (line.isEmpty()) {
-                    continue;
+                    continue; // Skip empty lines
                 }
 
                 String[] tokens = line.split(",");
 
-                if (tokens.length < 2) { // No meaning is provided
-                    continue;
+                if (tokens.length < 2) {
+                    continue; // Skip lines without meanings
                 }
 
-                // The first token is the word,
                 String word = tokens[0].trim().toLowerCase();
                 Set<String> meanings = new HashSet<>();
 
-                // Add each token as a meaning
                 for (int i = 1; i < tokens.length; i++) {
                     String meaning = tokens[i].trim();
                     if (!meaning.isEmpty()) {
                         meanings.add(meaning);
                     }
+                    // Store the word with its set of meanings
                     dictionary.put(word, meanings);
                 }
             }
         }
     }
 
+
+    /**
+     * Saves the current dictionary contents to the file.
+     *
+     * @throws IOException If the file cannot be written.
+     */
     public void saveToFile() throws IOException {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(filepath))) {
             for (Map.Entry<String, Set<String>> entry : dictionary.entrySet()) {
@@ -79,46 +92,76 @@ public class Dictionary {
         }
     }
 
-
-    // Query the meanings of a word; returns null if not found.
+    /**
+     * Returns the set of meanings for a given word.
+     *
+     * @param word The word to query.
+     * @return A set of meanings, or {@code null} if the word is not found.
+     */
     public Set<String> query(String word) {
-        if (word == null) return null;
+        if (word == null) {
+            return null;
+        }
         return dictionary.get(word.toLowerCase());
     }
 
-    // Add a new word with its meanings.
-    // Returns true if the word was added, false if it already exists.
+    /**
+     * Adds a new word with its meanings to the dictionary.
+     *
+     * @param word     The word to add.
+     * @param meanings The meanings associated with the word.
+     * @return {@code true} if the word was added; {@code false} if it already exists.
+     */
     public boolean addWord(String word, Set<String> meanings) {
         if (word == null || meanings == null || meanings.isEmpty()) {
             throw new IllegalArgumentException("Word and meanings must not be null or empty.");
         }
         String key = word.toLowerCase();
-        // putIfAbsent returns null if the word was absent, meaning insertion succeeded.
+
+        // Only add if the word doesn't already exist
         return dictionary.putIfAbsent(key, new CopyOnWriteArraySet<>(meanings)) == null;
     }
 
-    // Remove a word from the dictionary.
-    // Returns true if the word was removed; false if it was not found.
+
+    /**
+     * Removes a word from the dictionary.
+     *
+     * @param word The word to remove.
+     * @return {@code true} if the word was removed; {@code false} if it was not found.
+     */
     public boolean removeWord(String word) {
         if (word == null) return false;
         return dictionary.remove(word.toLowerCase()) != null;
     }
 
-    // Add an additional meaning to an existing word.
-    // Returns true if the meaning was added, false if the word is not found or the meaning already exists.
+    /**
+     * Adds a new meaning to an existing word.
+     *
+     * @param word    The word to which the meaning is to be added.
+     * @param meaning The new meaning to add.
+     * @return {@code true} if the meaning was added; {@code false} if the word is not found or the meaning already exists.
+     */
     public boolean addMeaning(String word, String meaning) {
         if (word == null || meaning == null || meaning.trim().isEmpty()) {
             throw new IllegalArgumentException("Word and meaning must not be null or empty.");
         }
         Set<String> meanings = dictionary.get(word.toLowerCase());
         if (meanings != null) {
-            return meanings.add(meaning);
+            return meanings.add(meaning); // returns false if meaning already exists
         }
         return false;
     }
 
-    // Update an existing meaning with a new one.
-    // Returns true if the update was successful, false otherwise.
+
+
+    /**
+     * Updates a meaning of a word by replacing the old meaning with a new one.
+     *
+     * @param word       The word whose meaning is to be updated.
+     * @param oldMeaning The existing meaning to be replaced.
+     * @param newMeaning The new meaning to replace the old one.
+     * @return {@code true} if the update was successful; {@code false} otherwise.
+     */
     public boolean updateMeaning(String word, String oldMeaning, String newMeaning) {
         if (word == null || oldMeaning == null || newMeaning == null ||
                 oldMeaning.trim().isEmpty() || newMeaning.trim().isEmpty()) {
@@ -132,7 +175,5 @@ public class Dictionary {
         }
         return false;
     }
-
-
 }
 

@@ -5,11 +5,7 @@ import java.awt.*;
 import java.awt.event.*;
 
 public class ClientFrame extends JFrame implements ActionListener {
-    // Listener interface to pass connection details.
-    public interface ConnectionListener {
-        void onConnectionDetailsProvided(String hostname, int port);
-    }
-
+    // Define a listener interface for passing connection details.
     private JTextField hostnameField;
     private JTextField portField;
     private JButton connectButton;
@@ -17,18 +13,20 @@ public class ClientFrame extends JFrame implements ActionListener {
 
     /**
      * Constructs the connection GUI.
-     * @param listener a callback to receive the hostname and port when Connect is pressed.
+     * @param listener a callback that will receive the hostname and port when the user clicks Connect.
      */
     public ClientFrame(ConnectionListener listener) {
         super("Dictionary Client Connection");
+
         this.listener = listener;
+
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(10, 10, 10, 10);
         gbc.fill = GridBagConstraints.HORIZONTAL;
 
-        // Hostname/Address label and text field.
+        // Hostname label and text field.
         gbc.gridx = 0;
         gbc.gridy = 0;
         add(new JLabel("Hostname/Address:"), gbc);
@@ -49,7 +47,7 @@ public class ClientFrame extends JFrame implements ActionListener {
         add(portField, gbc);
 
         // Connect button.
-        connectButton = new JButton("Connect");
+        connectButton = new JButton("Connect Now");
         connectButton.addActionListener(this);
         gbc.gridx = 0;
         gbc.gridy = 2;
@@ -57,7 +55,6 @@ public class ClientFrame extends JFrame implements ActionListener {
         add(connectButton, gbc);
 
         pack();
-        setLocationRelativeTo(null); // Center the frame.
         setVisible(true);
     }
 
@@ -68,14 +65,16 @@ public class ClientFrame extends JFrame implements ActionListener {
         int port;
         try {
             port = Integer.parseInt(portText);
-        } catch (NumberFormatException ex) {
+        }
+        // In the case the port number passed was is not an integer display the error message to user
+        catch (NumberFormatException ex) {
             JOptionPane.showMessageDialog(this, "Please enter a valid port number.", "Invalid Input", JOptionPane.ERROR_MESSAGE);
             return;
         }
-        // Pass the connection details back via the listener.
+        // Pass the provided connection details back via the listener.
         if (listener != null) {
             listener.onConnectionDetailsProvided(hostname, port);
         }
-        dispose(); // Close this frame.
+        dispose(); // Close the connection frame.
     }
 }
