@@ -4,15 +4,28 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 
+
+/**
+ * The {@code ClientFrame} class provides a simple GUI for entering
+ * hostname and port connection details for the dictionary client.
+ * <p>
+ * Once the user submits the information via the Connect button,
+ * it passes the details to a {@link ConnectionListener}.
+ */
 public class ClientFrame extends JFrame implements ActionListener {
-    // Define a listener interface for passing connection details.
+    // Text fields for hostname and port
     private JTextField hostnameField;
     private JTextField portField;
+
+    // Button to trigger connection
     private JButton connectButton;
+
+    // Listener to notify the main client application of user input
     private ConnectionListener listener;
 
     /**
      * Constructs the connection GUI.
+     *
      * @param listener a callback that will receive the hostname and port when the user clicks Connect.
      */
     public ClientFrame(ConnectionListener listener) {
@@ -20,8 +33,11 @@ public class ClientFrame extends JFrame implements ActionListener {
 
         this.listener = listener;
 
+        // Basic JFrame setup
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new GridBagLayout());
+
+        // Configure layout constraints
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(10, 10, 10, 10);
         gbc.fill = GridBagConstraints.HORIZONTAL;
@@ -30,7 +46,6 @@ public class ClientFrame extends JFrame implements ActionListener {
         gbc.gridx = 0;
         gbc.gridy = 0;
         add(new JLabel("Hostname/Address:"), gbc);
-
         hostnameField = new JTextField(20);
         gbc.gridx = 1;
         gbc.gridy = 0;
@@ -40,13 +55,12 @@ public class ClientFrame extends JFrame implements ActionListener {
         gbc.gridx = 0;
         gbc.gridy = 1;
         add(new JLabel("Port Number:"), gbc);
-
         portField = new JTextField(20);
         gbc.gridx = 1;
         gbc.gridy = 1;
         add(portField, gbc);
 
-        // Connect button.
+        // Connect button setup
         connectButton = new JButton("Connect Now");
         connectButton.addActionListener(this);
         gbc.gridx = 0;
@@ -54,10 +68,20 @@ public class ClientFrame extends JFrame implements ActionListener {
         gbc.gridwidth = 2;
         add(connectButton, gbc);
 
-        pack();
-        setVisible(true);
+        // Pressing Enter anywhere in the form will click the "Connect Now" button
+        getRootPane().setDefaultButton(connectButton);
+
+        pack(); // Resize window to fit components
+        setVisible(true); // Show the window
     }
 
+
+    /**
+     * Called when the user clicks the Connect button.
+     * Validates the port input and notifies the {@code ConnectionListener}.
+     *
+     * @param e The ActionEvent triggered by the button.
+     */
     @Override
     public void actionPerformed(ActionEvent e) {
         String hostname = hostnameField.getText();

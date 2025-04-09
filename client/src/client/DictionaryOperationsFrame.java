@@ -4,6 +4,11 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 
+
+/**
+ * The {@code DictionaryOperationsFrame} provides a GUI for interacting with the dictionary server.
+ * Users can perform operations such as querying, adding, removing, appending, and updating words.
+ */
 public class DictionaryOperationsFrame extends JFrame implements ActionListener {
     private DictionaryClient client;
     private JButton queryButton;
@@ -13,6 +18,11 @@ public class DictionaryOperationsFrame extends JFrame implements ActionListener 
     private JButton updateButton;
     private JButton exitButton;
 
+    /**
+     * Constructs the operations GUI with all dictionary commands.
+     *
+     * @param client The {@link DictionaryClient} that handles communication with the server.
+     */
     public DictionaryOperationsFrame(DictionaryClient client) {
         super("Dictionary Operations");
         this.client = client;
@@ -69,19 +79,28 @@ public class DictionaryOperationsFrame extends JFrame implements ActionListener 
         setVisible(true);
     }
 
+
+    /**
+     * Handles button actions for dictionary operations.
+     *
+     * @param e the action event triggered by user interaction
+     */
     @Override
     public void actionPerformed(ActionEvent e) {
         Object source = e.getSource();
+
         if (source == exitButton) {
             client.disconnect();
             System.exit(0);
-        } else if (source == queryButton) {
+        }
+        else if (source == queryButton) {
             String word = JOptionPane.showInputDialog(this, "Enter the word to query:");
             if (word != null && !word.trim().isEmpty()) {
                 String request = "QUERY:" + word;
                 sendRequest(request, "Query Response");
             }
-        } else if (source == addButton) {
+        }
+        else if (source == addButton) {
             JTextField wordField = new JTextField();
             JTextField meaningsField = new JTextField();
             Object[] message = {
@@ -99,13 +118,15 @@ public class DictionaryOperationsFrame extends JFrame implements ActionListener 
                 String request = "ADD:" + word + ":" + meanings;
                 sendRequest(request, "Add Word Response");
             }
-        } else if (source == removeButton) {
+        }
+        else if (source == removeButton) {
             String word = JOptionPane.showInputDialog(this, "Enter the word to remove:");
             if (word != null && !word.trim().isEmpty()) {
                 String request = "REMOVE:" + word;
                 sendRequest(request, "Remove Word Response");
             }
-        } else if (source == appendButton) {
+        }
+        else if (source == appendButton) {
             JTextField wordField = new JTextField();
             JTextField newMeaningField = new JTextField();
             Object[] message = {
@@ -123,7 +144,8 @@ public class DictionaryOperationsFrame extends JFrame implements ActionListener 
                 String request = "APPEND:" + word + ":" + newMeaning;
                 sendRequest(request, "Append Meaning Response");
             }
-        } else if (source == updateButton) {
+        }
+        else if (source == updateButton) {
             JTextField wordField = new JTextField();
             JTextField oldMeaningField = new JTextField();
             JTextField newMeaningField = new JTextField();
@@ -148,9 +170,9 @@ public class DictionaryOperationsFrame extends JFrame implements ActionListener 
     }
 
     /**
-     * Sends a request to the server via the DictionaryClient and shows the response.
-     * @param request the request string to send.
-     * @param title the title for the response dialog.
+     * Sends a command request to the dictionary server and shows the response.
+     * @param request the formatted command string to send to the server
+     * @param title   the title of the response dialog shown to the user
      */
     private void sendRequest(String request, String title) {
         try {

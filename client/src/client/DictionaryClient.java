@@ -5,6 +5,14 @@ import java.net.*;
 import java.io.*;
 import java.util.concurrent.CountDownLatch;
 
+
+/**
+ * The {@code DictionaryClient} class handles the client-side logic
+ * of connecting to the dictionary server and launching the GUI for operations.
+ * <p>
+ * It opens a connection to the server using details provided by the user via a GUI,
+ * then passes the communication streams to the operations frame.
+ */
 public class DictionaryClient {
     private String hostname;
     private int port;
@@ -12,10 +20,21 @@ public class DictionaryClient {
     private DataOutputStream dos;
     private DataInputStream dis;
 
+
+    /**
+     * Constructs a new DictionaryClient.
+     * The connection details (hostname and port) will be set via the GUI.
+     */
     public DictionaryClient() {
-        // Hostname and port will be set via the GUI.
     }
 
+    /**
+     * Launches the client application.
+     * Starts with a connection GUI, then connects to the server,
+     * and launches the dictionary operations interface.
+     *
+     * @param args Command-line arguments (not used).
+     */
     public static void main(String[] args) {
         // Use a CountDownLatch to wait for the GUI to provide connection details.
         final CountDownLatch latch = new CountDownLatch(1);
@@ -26,7 +45,7 @@ public class DictionaryClient {
             new ClientFrame((host, port) -> {
                 client.hostname = host;
                 client.port = port;
-                latch.countDown();
+                latch.countDown(); // Release the latch when user provides input
             });
         });
 
@@ -42,6 +61,7 @@ public class DictionaryClient {
         // Try to connect using the provided hostname and port.
         if (client.connect()) {
             System.out.println("Connected to dictionary server at " + client.hostname + ":" + client.port);
+
             // Launch the operations frame on the Swing thread.
             SwingUtilities.invokeLater(() -> new DictionaryOperationsFrame(client));
         }
@@ -50,9 +70,10 @@ public class DictionaryClient {
         }
     }
 
+
     /**
      * Attempts to open a socket connection using the hostname and port.
-     * @return true if connection is successful; false otherwise.
+     * @return {@code true} if the connection is successful; {@code false} otherwise.
      */
     private boolean connect() {
         try {
@@ -82,11 +103,20 @@ public class DictionaryClient {
         }
     }
 
-    // Getters for the streams to allow the operations frame to send/receive data.
+    /**
+     * Returns the output stream for sending requests to the server.
+     *
+     * @return DataOutputStream to the server.
+     */
     public DataOutputStream getOutputStream() {
         return dos;
     }
 
+    /**
+     * Returns the input stream for receiving responses from the server.
+     *
+     * @return DataInputStream from the server.
+     */
     public DataInputStream getInputStream() {
         return dis;
     }
