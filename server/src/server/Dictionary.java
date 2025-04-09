@@ -78,7 +78,7 @@ public class Dictionary {
      *
      * @throws IOException If the file cannot be written.
      */
-    public void saveToFile() throws IOException {
+    protected void saveToFile() throws IOException {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(filepath))) {
             for (Map.Entry<String, Set<String>> entry : dictionary.entrySet()) {
                 StringBuilder sb = new StringBuilder();
@@ -98,7 +98,7 @@ public class Dictionary {
      * @param word The word to query.
      * @return A set of meanings, or {@code null} if the word is not found.
      */
-    public Set<String> query(String word) {
+    protected Set<String> query(String word) {
         if (word == null) {
             return null;
         }
@@ -112,7 +112,7 @@ public class Dictionary {
      * @param meanings The meanings associated with the word.
      * @return {@code true} if the word was added; {@code false} if it already exists.
      */
-    public boolean addWord(String word, Set<String> meanings) {
+    protected boolean addWord(String word, Set<String> meanings) {
         if (word == null || meanings == null || meanings.isEmpty()) {
             throw new IllegalArgumentException("Word and meanings must not be null or empty.");
         }
@@ -129,7 +129,7 @@ public class Dictionary {
      * @param word The word to remove.
      * @return {@code true} if the word was removed; {@code false} if it was not found.
      */
-    public boolean removeWord(String word) {
+    protected boolean removeWord(String word) {
         if (word == null) return false;
         return dictionary.remove(word.toLowerCase()) != null;
     }
@@ -141,7 +141,7 @@ public class Dictionary {
      * @param meaning The new meaning to add.
      * @return {@code true} if the meaning was added; {@code false} if the word is not found or the meaning already exists.
      */
-    public boolean addMeaning(String word, String meaning) {
+    protected boolean addMeaning(String word, String meaning) {
         if (word == null || meaning == null || meaning.trim().isEmpty()) {
             throw new IllegalArgumentException("Word and meaning must not be null or empty.");
         }
@@ -162,7 +162,7 @@ public class Dictionary {
      * @param newMeaning The new meaning to replace the old one.
      * @return {@code true} if the update was successful; {@code false} otherwise.
      */
-    public boolean updateMeaning(String word, String oldMeaning, String newMeaning) {
+    protected boolean updateMeaning(String word, String oldMeaning, String newMeaning) {
         if (word == null || oldMeaning == null || newMeaning == null ||
                 oldMeaning.trim().isEmpty() || newMeaning.trim().isEmpty()) {
             throw new IllegalArgumentException("Invalid input: word and meanings must not be null or empty.");

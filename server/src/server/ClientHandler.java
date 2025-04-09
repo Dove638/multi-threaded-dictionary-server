@@ -13,11 +13,11 @@ import java.util.concurrent.Executors;
  * <p>Supported commands include: QUERY, ADD, REMOVE, APPEND, and UPDATE.</p>
  */
 public class ClientHandler implements Runnable {
-    private Socket clientSocket;
-    private Dictionary dictionary;
+    private final Socket clientSocket;
+    private final Dictionary dictionary;
 
     // Thread pool to handle individual requests on this persistent connection
-    private ExecutorService requestPool = Executors.newCachedThreadPool();
+    private final ExecutorService requestPool = Executors.newCachedThreadPool();
 
     // Lock to synchronize writes to the output stream
     private final Object writeLock = new Object();
