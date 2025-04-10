@@ -10,13 +10,13 @@ import java.awt.event.*;
  * Users can perform operations such as querying, adding, removing, appending, and updating words.
  */
 public class DictionaryOperationsFrame extends JFrame implements ActionListener {
-    private DictionaryClient client;
-    private JButton queryButton;
-    private JButton addButton;
-    private JButton removeButton;
-    private JButton appendButton;
-    private JButton updateButton;
-    private JButton exitButton;
+    private final DictionaryClient client;
+    private final JButton queryButton;
+    private final JButton addButton;
+    private final JButton removeButton;
+    private final JButton appendButton;
+    private final JButton updateButton;
+    private final JButton exitButton;
 
     /**
      * Constructs the operations GUI with all dictionary commands.

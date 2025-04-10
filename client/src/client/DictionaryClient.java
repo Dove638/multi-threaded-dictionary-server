@@ -41,16 +41,19 @@ public class DictionaryClient {
         final DictionaryClient client = new DictionaryClient();
 
         // Launch the connection GUI on the Swing thread.
-        SwingUtilities.invokeLater(() -> {
-            new ClientFrame((host, port) -> {
-                client.hostname = host;
-                client.port = port;
-                latch.countDown(); // Release the latch when user provides input
-            });
-        });
+        SwingUtilities.invokeLater(() -> new ClientFrame((host, port) -> {
+            client.hostname = host;
+            client.port = port;
+            latch.countDown(); // Release the latch when user provides input
+        }));
 
         // Wait until the user has provided connection details.
         try {
+            //If the current count is zero then this method returns immediately.
+            //If the current count is greater than zero then the current thread becomes disabled for thread scheduling purposes and lies dormant until one of two things happen:
+            // If the current thread:
+            // has its interrupted status set on entry to this method; or
+            // is interrupted while waiting,
             latch.await();
         }
         catch (InterruptedException e) {
@@ -61,7 +64,6 @@ public class DictionaryClient {
         // Try to connect using the provided hostname and port.
         if (client.connect()) {
             System.out.println("Connected to dictionary server at " + client.hostname + ":" + client.port);
-
             // Launch the operations frame on the Swing thread.
             SwingUtilities.invokeLater(() -> new DictionaryOperationsFrame(client));
         }
@@ -92,7 +94,7 @@ public class DictionaryClient {
     /**
      * Closes the connection and streams.
      */
-    public void disconnect() {
+    protected void disconnect() {
         try {
             if (dos != null) dos.close();
             if (dis != null) dis.close();
@@ -108,7 +110,7 @@ public class DictionaryClient {
      *
      * @return DataOutputStream to the server.
      */
-    public DataOutputStream getOutputStream() {
+    protected DataOutputStream getOutputStream() {
         return dos;
     }
 
@@ -117,7 +119,7 @@ public class DictionaryClient {
      *
      * @return DataInputStream from the server.
      */
-    public DataInputStream getInputStream() {
+    protected DataInputStream getInputStream() {
         return dis;
     }
 }

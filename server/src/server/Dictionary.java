@@ -20,6 +20,8 @@ public class Dictionary {
     // Thread-safe map storing words and their meanings
     private ConcurrentMap<String, Set<String>> dictionary;
     private final String filepath;
+    private final Object fileLock = new Object();
+
 
     /**
      * Constructs a new Dictionary with the specified file path.
@@ -79,15 +81,17 @@ public class Dictionary {
      * @throws IOException If the file cannot be written.
      */
     protected void saveToFile() throws IOException {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(filepath))) {
-            for (Map.Entry<String, Set<String>> entry : dictionary.entrySet()) {
-                StringBuilder sb = new StringBuilder();
-                sb.append(entry.getKey());
-                for (String meaning : entry.getValue()) {
-                    sb.append(",").append(meaning);
+        synchronized (fileLock) {
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter(filepath))) {
+                for (Map.Entry<String, Set<String>> entry : dictionary.entrySet()) {
+                    StringBuilder sb = new StringBuilder();
+                    sb.append(entry.getKey());
+                    for (String meaning : entry.getValue()) {
+                        sb.append(",").append(meaning);
+                    }
+                    writer.write(sb.toString());
+                    writer.newLine();
                 }
-                writer.write(sb.toString());
-                writer.newLine();
             }
         }
     }
@@ -147,7 +151,9 @@ public class Dictionary {
         }
         Set<String> meanings = dictionary.get(word.toLowerCase());
         if (meanings != null) {
-            return meanings.add(meaning); // returns false if meaning already exists
+            synchronized (meanings){
+                return meanings.add(meaning); // returns false if meaning already exists
+            }
         }
         return false;
     }
@@ -168,10 +174,13 @@ public class Dictionary {
             throw new IllegalArgumentException("Invalid input: word and meanings must not be null or empty.");
         }
         Set<String> meanings = dictionary.get(word.toLowerCase());
-        if (meanings != null && meanings.contains(oldMeaning)) {
-            meanings.remove(oldMeaning);
-            meanings.add(newMeaning);
-            return true;
+
+        synchronized (meanings){
+            if (meanings != null && meanings.contains(oldMeaning)) {
+                meanings.remove(oldMeaning);
+                meanings.add(newMeaning);
+                return true;
+            }
         }
         return false;
     }

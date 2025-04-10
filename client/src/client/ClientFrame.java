@@ -14,14 +14,14 @@ import java.awt.event.*;
  */
 public class ClientFrame extends JFrame implements ActionListener {
     // Text fields for hostname and port
-    private JTextField hostnameField;
-    private JTextField portField;
+    private final JTextField hostnameField;
+    private final JTextField portField;
 
     // Button to trigger connection
-    private JButton connectButton;
+    private final JButton connectButton;
 
     // Listener to notify the main client application of user input
-    private ConnectionListener listener;
+    private final ConnectionListener listener;
 
     /**
      * Constructs the connection GUI.
@@ -90,7 +90,7 @@ public class ClientFrame extends JFrame implements ActionListener {
         try {
             port = Integer.parseInt(portText);
         }
-        // In the case the port number passed was is not an integer display the error message to user
+        // In the case the port number passed was not an integer display the error message to user
         catch (NumberFormatException ex) {
             JOptionPane.showMessageDialog(this, "Please enter a valid port number.", "Invalid Input", JOptionPane.ERROR_MESSAGE);
             return;

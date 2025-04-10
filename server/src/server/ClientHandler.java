@@ -2,8 +2,6 @@ package server;
 
 import java.io.*;
 import java.net.Socket;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 /**
  * The {@code ClientHandler} class handles communication with a single client
@@ -17,7 +15,7 @@ public class ClientHandler implements Runnable {
     private final Dictionary dictionary;
 
     // Thread pool to handle individual requests on this persistent connection
-    private final ExecutorService requestPool = Executors.newCachedThreadPool();
+    // private final ExecutorService requestPool = Executors.newCachedThreadPool();
 
     // Lock to synchronize writes to the output stream
     private final Object writeLock = new Object();
@@ -52,30 +50,27 @@ public class ClientHandler implements Runnable {
                     break;
                 }
 
-                // Process each request in its own thread from the pool.
-                requestPool.execute(() -> {
-                    String response = processRequest(request);
+                String response = processRequest(request);
 
-                    // Synchronize output to prevent interleaving responses.
-                    synchronized (writeLock) {
-                        try {
-                            dos.writeUTF(response);
-                        }
-                        catch (IOException e) {
-                            e.printStackTrace();
-                        }
+                // Synchronize output to prevent interleaving responses.
+                synchronized (writeLock) {
+                    try {
+                        dos.writeUTF(response);
                     }
-                });
-            }
+                    catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            };
         }
         catch (IOException e) {
             System.out.println("Client disconnected: " + clientSocket.getInetAddress());
         }
         finally {
-            requestPool.shutdown(); // Clean up the thread pool
             try {
                 clientSocket.close();
-            } catch (IOException e) {
+            }
+            catch (IOException e) {
                 e.printStackTrace();
             }
         }
