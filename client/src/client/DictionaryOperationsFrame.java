@@ -6,7 +6,7 @@ import java.awt.event.*;
 
 
 /**
- * The {@code DictionaryOperationsFrame} provides a GUI for interacting with the dictionary server.
+ * The DictionaryOperationsFrame provides a GUI for interacting with the dictionary server.
  * Users can perform operations such as querying, adding, removing, appending, and updating words.
  */
 public class DictionaryOperationsFrame extends JFrame implements ActionListener {
@@ -20,8 +20,6 @@ public class DictionaryOperationsFrame extends JFrame implements ActionListener 
 
     /**
      * Constructs the operations GUI with all dictionary commands.
-     *
-     * @param client The {@link DictionaryClient} that handles communication with the server.
      */
     public DictionaryOperationsFrame(DictionaryClient client) {
         super("Dictionary Operations");
@@ -82,8 +80,6 @@ public class DictionaryOperationsFrame extends JFrame implements ActionListener 
 
     /**
      * Handles button actions for dictionary operations.
-     *
-     * @param e the action event triggered by user interaction
      */
     @Override
     public void actionPerformed(ActionEvent e) {
@@ -171,8 +167,6 @@ public class DictionaryOperationsFrame extends JFrame implements ActionListener 
 
     /**
      * Sends a command request to the dictionary server and shows the response.
-     * @param request the formatted command string to send to the server
-     * @param title   the title of the response dialog shown to the user
      */
     private void sendRequest(String request, String title) {
         try {

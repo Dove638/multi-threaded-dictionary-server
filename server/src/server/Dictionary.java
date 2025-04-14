@@ -13,7 +13,7 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.CopyOnWriteArraySet;
 
 /**
- * The {@code Dictionary} class manages a thread-safe dictionary of words and their meanings.
+ * The Dictionary class manages a thread-safe dictionary of words and their meanings.
  * It supports loading from and saving to a file, as well as querying and modifying dictionary entries.
  */
 public class Dictionary {
@@ -25,8 +25,6 @@ public class Dictionary {
 
     /**
      * Constructs a new Dictionary with the specified file path.
-     *
-     * @param filepath The path to the dictionary file.
      */
     public Dictionary(String filepath){
         this.filepath = filepath;
@@ -36,8 +34,6 @@ public class Dictionary {
     /**
      * Loads the dictionary from the file specified during construction.
      * Each line in the file should have the format: word,meaning1,meaning2,...
-     *
-     * @throws IOException If the file cannot be read.
      */
     protected void loadInitialDictionary() throws IOException {
         dictionary = new ConcurrentHashMap<>();
@@ -77,8 +73,6 @@ public class Dictionary {
 
     /**
      * Saves the current dictionary contents to the file.
-     *
-     * @throws IOException If the file cannot be written.
      */
     protected void saveToFile() throws IOException {
         synchronized (fileLock) {
@@ -98,9 +92,6 @@ public class Dictionary {
 
     /**
      * Returns the set of meanings for a given word.
-     *
-     * @param word The word to query.
-     * @return A set of meanings, or {@code null} if the word is not found.
      */
     protected Set<String> query(String word) {
         if (word == null) {
@@ -111,10 +102,6 @@ public class Dictionary {
 
     /**
      * Adds a new word with its meanings to the dictionary.
-     *
-     * @param word     The word to add.
-     * @param meanings The meanings associated with the word.
-     * @return {@code true} if the word was added; {@code false} if it already exists.
      */
     protected boolean addWord(String word, Set<String> meanings) {
         if (word == null || meanings == null || meanings.isEmpty()) {
@@ -129,9 +116,6 @@ public class Dictionary {
 
     /**
      * Removes a word from the dictionary.
-     *
-     * @param word The word to remove.
-     * @return {@code true} if the word was removed; {@code false} if it was not found.
      */
     protected boolean removeWord(String word) {
         if (word == null) return false;
@@ -140,10 +124,6 @@ public class Dictionary {
 
     /**
      * Adds a new meaning to an existing word.
-     *
-     * @param word    The word to which the meaning is to be added.
-     * @param meaning The new meaning to add.
-     * @return {@code true} if the meaning was added; {@code false} if the word is not found or the meaning already exists.
      */
     protected boolean addMeaning(String word, String meaning) {
         if (word == null || meaning == null || meaning.trim().isEmpty()) {
@@ -162,11 +142,6 @@ public class Dictionary {
 
     /**
      * Updates a meaning of a word by replacing the old meaning with a new one.
-     *
-     * @param word       The word whose meaning is to be updated.
-     * @param oldMeaning The existing meaning to be replaced.
-     * @param newMeaning The new meaning to replace the old one.
-     * @return {@code true} if the update was successful; {@code false} otherwise.
      */
     protected boolean updateMeaning(String word, String oldMeaning, String newMeaning) {
         if (word == null || oldMeaning == null || newMeaning == null ||

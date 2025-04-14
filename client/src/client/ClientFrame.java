@@ -6,11 +6,10 @@ import java.awt.event.*;
 
 
 /**
- * The {@code ClientFrame} class provides a simple GUI for entering
+ * The ClientFrame class provides a simple GUI for entering
  * hostname and port connection details for the dictionary client.
- * <p>
  * Once the user submits the information via the Connect button,
- * it passes the details to a {@link ConnectionListener}.
+ * it passes the details to a ConnectionListener.
  */
 public class ClientFrame extends JFrame implements ActionListener {
     // Text fields for hostname and port
@@ -25,8 +24,6 @@ public class ClientFrame extends JFrame implements ActionListener {
 
     /**
      * Constructs the connection GUI.
-     *
-     * @param listener a callback that will receive the hostname and port when the user clicks Connect.
      */
     public ClientFrame(ConnectionListener listener) {
         super("Dictionary Client Connection");
@@ -78,9 +75,7 @@ public class ClientFrame extends JFrame implements ActionListener {
 
     /**
      * Called when the user clicks the Connect button.
-     * Validates the port input and notifies the {@code ConnectionListener}.
-     *
-     * @param e The ActionEvent triggered by the button.
+     * Validates the port input and notifies the ConnectionListener
      */
     @Override
     public void actionPerformed(ActionEvent e) {

@@ -4,11 +4,9 @@ import java.io.*;
 import java.net.Socket;
 
 /**
- * The {@code ClientHandler} class handles communication with a single client
+ * The ClientHandler class handles communication with a single client
  * connected to the Dictionary server. It supports concurrent processing of
- * client commands through a thread pool.
- *
- * <p>Supported commands include: QUERY, ADD, REMOVE, APPEND, and UPDATE.</p>
+ * client commands through a thread-per-connection model.
  */
 public class ClientHandler implements Runnable {
     private final Socket clientSocket;
@@ -21,10 +19,7 @@ public class ClientHandler implements Runnable {
     private final Object writeLock = new Object();
 
     /**
-     * Constructs a new {@code ClientHandler}.
-     *
-     * @param clientSocket The client socket connected to the server.
-     * @param dictionary   The shared dictionary used for processing requests.
+     * Constructs a new ClientHandler
      */
     public ClientHandler(Socket clientSocket, Dictionary dictionary) {
         this.clientSocket = clientSocket;
@@ -78,10 +73,6 @@ public class ClientHandler implements Runnable {
 
     /**
      * Processes a client request based on a simple text-based protocol.
-     * The format is {@code COMMAND:arg1:arg2:...}
-     *
-     * @param request The raw request string from the client.
-     * @return The response string to be sent back to the client.
      */
     private String processRequest(String request) {
         String[] tokens = request.split(":");

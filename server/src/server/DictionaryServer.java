@@ -15,9 +15,6 @@ public class DictionaryServer {
 
     /**
      * The main method that launches the dictionary server.
-     *
-     * @param args Command-line arguments: port number and path to the dictionary file.
-     * @throws IllegalArgumentException if incorrect arguments are provided.
      */
     public static void main(String[] args) {
         // Validate that two arguments are provided: port and dictionary file path
@@ -34,9 +31,6 @@ public class DictionaryServer {
 
     /**
      * Starts the dictionary server on the specified port and loads the dictionary.
-     *
-     * @param port               The port number the server listens on.
-     * @param dictionaryFilePath The file path of the dictionary to load.
      */
     private static void StartServer(int port, String dictionaryFilePath) {
         // Create the loader instance
